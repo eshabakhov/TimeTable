@@ -1,0 +1,50 @@
+﻿<Window x:Class="WPFTimeTable.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFTimeTable"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Расписание" d:DesignWidth="1080">
+    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+        <Grid >
+
+            <DataGrid x:Name="ScheduleDataGrid"                 
+                  ItemsSource="{Binding ScheduleRows}"
+                  AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="День недели"/>
+                    <DataGridTemplateColumn Header="5а" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox ItemsSource="{Binding Teachers, RelativeSource={RelativeSource AncestorType=Window}}"></ComboBox>
+                                    <!--<ComboBox Content="{Binding studentClasses[1].Subject}"></ComboBox>
+                                    <ComboBox Content="{Binding studentClasses[1].Cabinet}"></ComboBox>-->
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="5б"
+                                Binding="{Binding studentClasses[1].Name}"/>
+                    <DataGridTextColumn Header="5в"/>
+                    <DataGridTextColumn Header="5г"/>
+                    <DataGridTextColumn Header="8а"/>
+                    <DataGridTextColumn Header="8б"/>
+                    <DataGridTextColumn Header="8в"/>
+                    <DataGridTextColumn Header="8г"/>
+                    <DataGridTextColumn Header="9а"/>
+                    <DataGridTextColumn Header="9б"/>
+                    <DataGridTextColumn Header="9в"/>
+                    <DataGridTextColumn Header="9г"/>
+                    <DataGridTextColumn Header="10а"/>
+                    <DataGridTextColumn Header="10б"/>
+                    <DataGridTextColumn Header="11а"/>
+                    <DataGridTextColumn Header="11б"/>
+                </DataGrid.Columns>
+                
+            </DataGrid>
+        </Grid>
+    </ScrollViewer>
+</Window>
