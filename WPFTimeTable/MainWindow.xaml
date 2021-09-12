@@ -19,7 +19,7 @@
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
         <Grid>
-            <DataGrid x:Name="ScheduleDataGrid" ItemsSource="{Binding Schedule.DefaultView}" AutoGenerateColumns="True" AutoGeneratingColumn="ScheduleDataGrid_AutoGeneratingColumn">
+            <DataGrid x:Name="ScheduleDataGrid" ItemsSource="{Binding Schedule.DefaultView[0]}" AutoGenerateColumns="True" AutoGeneratingColumn="ScheduleDataGrid_AutoGeneratingColumn">
                 <DataGrid.Resources>
                     <DataTemplate x:Key="TeacherComboBox"/>
                 </DataGrid.Resources>
