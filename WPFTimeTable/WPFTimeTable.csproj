@@ -63,8 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ScheduleRow.cs" />
-    <Compile Include="StudentClass.cs" />
+    <Compile Include="SchoolDay.cs" />
+    <Compile Include="Cabinet.cs" />
+    <Compile Include="SchoolDayRow.cs" />
     <Compile Include="Teacher.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
+using System.Data;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WPFTimeTable
 {
@@ -23,44 +13,103 @@ namespace WPFTimeTable
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-
-        private ObservableCollection<ScheduleRow> _scheduleRows;
-        public ObservableCollection<ScheduleRow> ScheduleRows { get { return _scheduleRows; } set { _scheduleRows = value; OnPropertyChanged(nameof(ScheduleRows)); } }
-
-        private ObservableCollection<Teacher> _teachers;
-        public ObservableCollection<Teacher> Teachers { get { return _teachers; } set { _teachers = value; OnPropertyChanged(nameof(Teachers)); } }
-
-
+        private ObservableCollection<Teacher> teachers;
+        public ObservableCollection<Teacher> Teachers
+        {
+            get => teachers;
+            set
+            {
+                teachers = value;
+                OnPropertyChanged(nameof(Teachers));
+            }
+        }
+        private ObservableCollection<Cabinet> cabinets;
+        public ObservableCollection<Cabinet> Cabinets
+        {
+            get => cabinets;
+            set
+            {
+                cabinets = value;
+                OnPropertyChanged(nameof(Cabinets));
+            }
+        }
+        private ObservableCollection<List<SchoolDay>> schoolDayRow;
+        public ObservableCollection<List<SchoolDay>> SchoolDayRows
+        {
+            get
+            {
+                return schoolDayRow;
+            }
+            set
+            {
+                schoolDayRow = value;
+                OnPropertyChanged(nameof(SchoolDayRow));
+            }
+        }
+        public DataTable Schedule { get; set; }
         public MainWindow()
         {
-            
             InitializeComponent();
-            ScheduleRows = new ObservableCollection<ScheduleRow>();
-            ScheduleRow scheduleRow = new ScheduleRow();
+
+            Cabinets = new ObservableCollection<Cabinet>();
+            Cabinet cabinet;
 
             Teachers = new ObservableCollection<Teacher>();
-            Teacher teacher = new Teacher();
+            Teacher teacher;
 
-            scheduleRow.studentClasses.Add(new StudentClass { Name = "а", Subject = "b", Cabinet = 1 });
-            scheduleRow.studentClasses.Add(new StudentClass { Name = "c", Subject = "d", Cabinet = 2 });
-            scheduleRow.studentClasses.Add(new StudentClass { Name = "e", Subject = "f", Cabinet = 3 });
+            for (int i = 0; i < 15; i++)
+            {
+                teacher = new Teacher();
+                teacher.TeacherName = (i + 1).ToString() + " учитель";
+                Teachers.Add(teacher);
+                Teachers[i].Subjects.Add("Алгебра");
+                Teachers[i].Subjects.Add("Геометрия");
 
-            teacher.TeacherName = "aboba";
-            Teachers.Add(teacher);
-            teacher.TeacherName = "abobus";
-            Teachers.Add(teacher);
-            teacher.TeacherName = "abobuus";
-            Teachers.Add(teacher);
+                cabinet = new Cabinet();
+                cabinet.CabinetNumber = (i + 1).ToString();
+                Cabinets.Add(cabinet);
+            }
+            Teachers[1].Subjects.Add("Русский");
 
-            ScheduleRows.Add(scheduleRow);
+            Schedule = new DataTable();
+            Schedule.Rows.Add(Schedule.NewRow());
+            Schedule.Columns.Add(new DataColumn("5А", typeof(SchoolDay)));
+            Schedule.Columns.Add(new DataColumn("5Б", typeof(SchoolDay)));
+            Schedule.Rows[0]["5А"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = "z" };
+            Schedule.Rows[0]["5Б"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = "z" };
+
+            SchoolDayRows = new ObservableCollection<List<SchoolDay>>();
+            SchoolDayRows.Add(new List<SchoolDay>());
+            SchoolDayRows.Add(new List<SchoolDay>());
+
+            SchoolDayRows[0].Add(new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = "z" });
+            SchoolDayRows[1].Add(new SchoolDay { Teacher = Teachers[1], Cabinet = Cabinets[1], Subject = "z" });
+            SchoolDayRows[0].Add(new SchoolDay { Teacher = Teachers[2], Cabinet = Cabinets[2], Subject = "z" });
+
+            //SchoolDayRow schoolDayRow = new SchoolDayRow();
+            //ComboBox TeacherComboBox = new ComboBox();
+            //schoolDayRow.schoolDays.Add(new SchoolDay { Teacher = Teachers[0], Subject = "b", Cabinet = Cabinets[0] });
+            //TeacherComboBox.ItemsSource = schoolDayRow.schoolDays;
 
             DataContext = this;
+        }
+
+        private void ScheduleDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(SchoolDay))
+            {
+                e.Column = new DataGridTemplateColumn()
+                {
+                    CellTemplate = (DataTemplate)Resources["TeacherComboBox"]
+                };
+            }
         }
     }
 }
