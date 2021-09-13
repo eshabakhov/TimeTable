@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Simplified;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
@@ -11,53 +12,35 @@ namespace WPFTimeTable
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-        private ObservableCollection<Teacher> teachers;
-        public ObservableCollection<Teacher> Teachers
-        {
-            get => teachers;
-            set
-            {
-                teachers = value;
-                OnPropertyChanged(nameof(Teachers));
-            }
-        }
-        private ObservableCollection<Cabinet> cabinets;
-        public ObservableCollection<Cabinet> Cabinets
-        {
-            get => cabinets;
-            set
-            {
-                cabinets = value;
-                OnPropertyChanged(nameof(Cabinets));
-            }
-        }
-        private ObservableCollection<List<SchoolDay>> schoolDayRow;
-        public ObservableCollection<List<SchoolDay>> SchoolDayRows
-        {
-            get
-            {
-                return schoolDayRow;
-            }
-            set
-            {
-                schoolDayRow = value;
-                OnPropertyChanged(nameof(SchoolDayRow));
-            }
-        }
-        public DataTable Schedule { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+        }
 
+        private void ScheduleDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(SchoolDay))
+            {
+                e.Column = new DataGridTemplateColumn()
+                {
+                    CellTemplate = (DataTemplate)Resources["TeacherComboBox"]
+                };
+            }
+        }
+
+    }
+    public class MainViewModel : BaseInpc
+    {
+        private DataTable _schedule;
+
+        public ObservableCollection<Teacher> Teachers { get; } = new ObservableCollection<Teacher>();
+        public ObservableCollection<Cabinet> Cabinets { get; } = new ObservableCollection<Cabinet>();
+        public ObservableCollection<List<SchoolDay>> SchoolDayRows { get; } = new ObservableCollection<List<SchoolDay>>();
+        public DataTable Schedule { get => _schedule; set => Set(ref _schedule, value); }
+        public MainViewModel()
+        {
             Cabinets = new ObservableCollection<Cabinet>();
             Cabinet cabinet;
 
@@ -98,18 +81,7 @@ namespace WPFTimeTable
             //schoolDayRow.schoolDays.Add(new SchoolDay { Teacher = Teachers[0], Subject = "b", Cabinet = Cabinets[0] });
             //TeacherComboBox.ItemsSource = schoolDayRow.schoolDays;
 
-            DataContext = this;
         }
 
-        private void ScheduleDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            if (e.PropertyType == typeof(SchoolDay))
-            {
-                e.Column = new DataGridTemplateColumn()
-                {
-                    CellTemplate = (DataTemplate)Resources["TeacherComboBox"]
-                };
-            }
-        }
     }
 }

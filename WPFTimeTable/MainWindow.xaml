@@ -5,25 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFTimeTable"
         mc:Ignorable="d"
-        Title="Расписание" d:DesignWidth="1080"  d:DataContext="{d:DesignInstance Type=local:MainWindow}" x:Name="MainScheduleWindow">
+        Title="Расписание" d:DesignWidth="1080"
+        x:Name="MainScheduleWindow"
+        DataContext="{DynamicResource viewModel}">
     <Window.Resources>
+        <local:MainViewModel x:Key="viewModel"/>
         <DataTemplate x:Key="TeacherComboBox">
             <!--DataType="{x:Type local:SchoolDay}"-->
             <StackPanel Orientation="Vertical" >
                 <!--DataContext="{Binding RelativeSource={RelativeSource AncestorType=DataGridCell}, Path=DataContext}"-->
-                <ComboBox ItemsSource="{Binding Path=Teachers, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Teacher}"/>
-                <ComboBox ItemsSource="{Binding Path=Teacher.Subjects}" SelectedItem="{Binding Path=Subject}"/>
-                <ComboBox ItemsSource="{Binding Path=Cabinets, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Cabinet}"/>
+                <ComboBox x:Name="teachersBox" ItemsSource="{Binding Teachers, Source={StaticResource viewModel}}" SelectedItem="{Binding Teacher}"/>
+                <ComboBox ItemsSource="{Binding Path=SelectedItem.Subjects, ElementName=teachersBox}" SelectedItem="{Binding Path=Subject}"/>
+                <ComboBox ItemsSource="{Binding Cabinets, Source={StaticResource viewModel}}" SelectedItem="{Binding Cabinet}"/>
             </StackPanel>
         </DataTemplate>
+        <Style x:Key="cellTemplate" TargetType="DataGridCell">
+            <Setter Property="ContentTemplate" Value="{DynamicResource TeacherComboBox}"/>
+        </Style>
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
         <Grid>
-            <DataGrid x:Name="ScheduleDataGrid" ItemsSource="{Binding Schedule.DefaultView[0]}" AutoGenerateColumns="True" AutoGeneratingColumn="ScheduleDataGrid_AutoGeneratingColumn">
+            <DataGrid ItemsSource="{Binding Schedule}" CellStyle="{DynamicResource cellTemplate}">
+                <!--<DataGrid.Resources>
+                    <DataTemplate x:Key="TeacherComboBox"/>
+                </DataGrid.Resources>-->
+            </DataGrid>
+            <!--<DataGrid x:Name="ScheduleDataGrid" ItemsSource="{Binding Schedule.DefaultView[0]}" AutoGenerateColumns="True" AutoGeneratingColumn="ScheduleDataGrid_AutoGeneratingColumn">
                 <DataGrid.Resources>
                     <DataTemplate x:Key="TeacherComboBox"/>
                 </DataGrid.Resources>
-            </DataGrid>
+            </DataGrid>-->
         </Grid>
     </ScrollViewer>
 </Window>
