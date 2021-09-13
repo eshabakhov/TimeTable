@@ -3,33 +3,50 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFTimeTable"
+        xmlns:local="clr-namespace:WPFTimeTable" xmlns:converters="clr-namespace:WPFTimeTable.Converters"
         mc:Ignorable="d"
         Title="Расписание" d:DesignWidth="1080"
         x:Name="MainScheduleWindow"
         DataContext="{DynamicResource viewModel}">
     <Window.Resources>
         <local:MainViewModel x:Key="viewModel"/>
-        <DataTemplate x:Key="TeacherComboBox">
+        <DataTemplate x:Key="TeacherComboBox" DataType="{x:Type local:SchoolDay}">
             <!--DataType="{x:Type local:SchoolDay}"-->
             <StackPanel Orientation="Vertical" >
                 <!--DataContext="{Binding RelativeSource={RelativeSource AncestorType=DataGridCell}, Path=DataContext}"-->
-                <ComboBox x:Name="teachersBox" ItemsSource="{Binding Teachers, Source={StaticResource viewModel}}" SelectedItem="{Binding Teacher}"/>
-                <ComboBox ItemsSource="{Binding Path=SelectedItem.Subjects, ElementName=teachersBox}" SelectedItem="{Binding Path=Subject}"/>
-                <ComboBox ItemsSource="{Binding Cabinets, Source={StaticResource viewModel}}" SelectedItem="{Binding Cabinet}"/>
+                <ComboBox x:Name="teachersBox" ItemsSource="{Binding Teachers, Source={StaticResource viewModel}}"
+                          SelectedItem="{Binding Teacher, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox ItemsSource="{Binding Path=SelectedItem.Subjects, ElementName=teachersBox}"
+                          SelectedItem="{Binding Path=Subject, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox ItemsSource="{Binding Cabinets, Source={StaticResource viewModel}}"
+                          SelectedItem="{Binding Cabinet, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
         </DataTemplate>
-        <Style x:Key="cellTemplate" TargetType="DataGridCell">
-            <Setter Property="ContentTemplate" Value="{DynamicResource TeacherComboBox}"/>
+        <DataTemplate x:Key="cellTemplate">
+            <ContentPresenter
+                ContentTemplate="{DynamicResource TeacherComboBox}">
+                <ContentPresenter.Content>
+                    <MultiBinding Converter="{converters:BindingToContentConverter}">
+                        <Binding RelativeSource="{RelativeSource Self}"/>
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=DataGridCell}"
+                                 Path="Column.Binding"/>
+                    </MultiBinding>
+                </ContentPresenter.Content>
+            </ContentPresenter>
+        </DataTemplate>
+        <Style x:Key="cellStyle" TargetType="DataGridCell">
+            <Setter Property="ContentTemplate" Value="{DynamicResource cellTemplate}"/>
         </Style>
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
         <Grid>
-            <DataGrid ItemsSource="{Binding Schedule}" CellStyle="{DynamicResource cellTemplate}">
+            <DataGrid ItemsSource="{Binding Schedule}" CellStyle="{DynamicResource cellStyle}"
+                      CanUserAddRows="False">
                 <!--<DataGrid.Resources>
                     <DataTemplate x:Key="TeacherComboBox"/>
                 </DataGrid.Resources>-->
             </DataGrid>
+            <Button Content="Debug" Click="OnDebug" VerticalAlignment="Bottom"/>
             <!--<DataGrid x:Name="ScheduleDataGrid" ItemsSource="{Binding Schedule.DefaultView[0]}" AutoGenerateColumns="True" AutoGeneratingColumn="ScheduleDataGrid_AutoGeneratingColumn">
                 <DataGrid.Resources>
                     <DataTemplate x:Key="TeacherComboBox"/>

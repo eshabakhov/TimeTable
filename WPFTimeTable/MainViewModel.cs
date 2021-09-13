@@ -39,8 +39,11 @@ namespace WPFTimeTable
             Schedule.Rows.Add(Schedule.NewRow());
             Schedule.Columns.Add(new DataColumn("5А", typeof(SchoolDay)));
             Schedule.Columns.Add(new DataColumn("5Б", typeof(SchoolDay)));
-            Schedule.Rows[0]["5А"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = "z" };
-            Schedule.Rows[0]["5Б"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = "z" };
+            Schedule.Rows[0]["5А"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = Teachers[0].Subjects[0] };
+            Schedule.Rows[0]["5Б"] = new SchoolDay { Teacher = Teachers[0], Cabinet = Cabinets[0], Subject = Teachers[0].Subjects[1] };
+            Schedule.Rows.Add(Schedule.NewRow());
+            Schedule.Rows[1]["5А"] = new SchoolDay { Teacher = Teachers[1], Cabinet = Cabinets[1], Subject = Teachers[1].Subjects[0] };
+            Schedule.Rows[1]["5Б"] = new SchoolDay { Teacher = Teachers[1], Cabinet = Cabinets[1], Subject = Teachers[1].Subjects[1] };
 
             SchoolDayRows = new ObservableCollection<List<SchoolDay>>();
             SchoolDayRows.Add(new List<SchoolDay>());

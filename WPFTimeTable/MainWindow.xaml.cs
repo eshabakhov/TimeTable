@@ -11,5 +11,10 @@ namespace WPFTimeTable
         {
             InitializeComponent();
         }
+
+        private void OnDebug(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
