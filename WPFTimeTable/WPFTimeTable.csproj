@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MainViewModel.cs" />
     <Compile Include="SchoolDay.cs" />
     <Compile Include="Cabinet.cs" />
     <Compile Include="SchoolDayRow.cs" />
